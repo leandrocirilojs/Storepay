@@ -25,10 +25,15 @@ function saveProduct(product) {
   localStorage.setItem('products', JSON.stringify(products));
 }
 
+
+
 // Função para carregar produtos do localStorage
 function loadProducts() {
   return JSON.parse(localStorage.getItem('products')) || [];
 }
+
+
+
 
 // Função para salvar vendas no localStorage
 function saveSale(sale) {
@@ -36,6 +41,9 @@ function saveSale(sale) {
   sales.push(sale);
   localStorage.setItem('sales', JSON.stringify(sales));
 }
+
+
+
 
 // Função para carregar vendas do localStorage
 function loadSales() {
@@ -45,6 +53,7 @@ function loadSales() {
 // Função para renderizar a tabela de produtos
 function renderProducts() {
   const products = loadProducts();
+  alert(products)
   const tableBody = document.querySelector('#productTable tbody');
 
   if (!tableBody) return; // Evita erro se o elemento não existir
