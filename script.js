@@ -53,7 +53,7 @@ function loadSales() {
 // Função para renderizar a tabela de produtos
 function renderProducts() {
   const products = loadProducts();
-  alert(products);
+
   const tableBody = document.querySelector('#productTable tbody');
 
   if (!tableBody) return; // Evita erro se o elemento não existir
