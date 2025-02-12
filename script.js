@@ -191,6 +191,41 @@ function renderSalesHistory() {
   });
 }
 
+
+
+
+
+
+function searchProduct() {
+  let search = document.getElementById('searchProduct').value.toLowerCase();
+  let products = loadProducts();
+  const tableBody = document.querySelector('#productTable tbody');
+  tableBody.innerHTML = '';
+
+  products.forEach((product, index) => {
+    if (product.name.toLowerCase().includes(search)) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${product.name}</td>
+        <td>${product.price.toFixed(2)}</td>
+        <td>${product.quantity}</td>
+        <td class="actions">
+          <button onclick="deleteProduct(${index})">Excluir</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
 // Função para renderizar o relatório de vendas
 function renderSalesReport() {
   const sales = loadSales();
