@@ -165,7 +165,7 @@ function searchProduct() {
 
 // Garante que os dados sejam carregados corretamente ao iniciar a página
 window.onload = () => {
-  alert("Pagina Carregada");
+  
   openTab('Estoque'); // Abre a guia Estoque
   renderProducts();
   renderSalesHistory();
