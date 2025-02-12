@@ -1,105 +1,192 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Software de Mercado</title>
+
   <link rel="stylesheet" href="styles.css">
+
 </head>
+
 <body>
+
   <div class="app-container">
+
     <!-- Cabeçalho -->
+
     <header class="app-header">
+
       <h1>Software de Mercado</h1>
+
     </header>
 
     <!-- Guias -->
+
     <nav class="app-tabs">
+
       <button class="tablink" onclick="openTab('Estoque')">Estoque</button>
+
       <button class="tablink" onclick="openTab('Cadastro')">Cadastro</button>
+
       <button class="tablink" onclick="openTab('Vendas')">Vendas</button>
+
       <button class="tablink" onclick="openTab('Relatorio')">Relatório</button>
+
     </nav>
 
     <!-- Conteúdo das Guias -->
+
     <div class="app-content">
+
       <div id="Estoque" class="tabcontent">
-        <input type="text" id="searchProduct" placeholder="Buscar produtos" onkeyup="searchProduct()">
+      <input type="text" id="searchProduct" placeholder="Buscar produto..." onkeyup="searchProduct()">
+
         <h2>Estoque</h2>
+
         <div class="table-container">
+
           <table id="productTable">
+
             <thead>
+
               <tr>
+
                 <th>Nome</th>
+
                 <th>Preço (R$)</th>
+
                 <th>Quantidade</th>
+
                 <th>Ações</th>
+
               </tr>
+
             </thead>
+
             <tbody>
+
               <!-- Produtos serão inseridos aqui via JavaScript -->
+
             </tbody>
+
           </table>
+
         </div>
+
       </div>
 
       <div id="Cadastro" class="tabcontent" style="display:none;">
+
         <h2>Cadastro de Produtos</h2>
+
         <form id="productForm" class="app-form">
+
           <input type="text" id="productName" placeholder="Nome do Produto" required>
+
           <input type="number" id="productPrice" placeholder="Preço" required>
+
           <input type="number" id="productQuantity" placeholder="Quantidade" required>
+
           <button type="submit">Adicionar</button>
+
         </form>
 
         <h2>Adicionar ao Estoque</h2>
+
         <form id="addStockForm" class="app-form">
+
           <select id="addStockProduct" required>
+
             <option value="">Selecione um produto</option>
+
           </select>
+
           <input type="number" id="addStockQuantity" placeholder="Quantidade" required>
+
           <button type="submit">Adicionar ao Estoque</button>
+
         </form>
+
       </div>
 
       <div id="Vendas" class="tabcontent" style="display:none;">
+
         <h2>Registrar Venda</h2>
+
         <form id="saleForm" class="app-form">
+
           <select id="saleProduct" required>
+
             <option value="">Selecione um produto</option>
+
           </select>
+
           <input type="number" id="saleQuantity" placeholder="Quantidade" required>
+
           <button type="submit">Registrar Venda</button>
+
         </form>
+
       </div>
 
       <div id="Relatorio" class="tabcontent" style="display:none;">
+
         <h2>Relatório de Vendas</h2>
+
         <div id="salesReport" class="app-report">
+
           <p><strong>Total de Vendas:</strong> R$ <span id="totalSales">0.00</span></p>
+
           <p><strong>Produto Mais Vendido:</strong> <span id="bestSellingProduct">Nenhum</span></p>
+
         </div>
 
         <h2>Histórico de Vendas</h2>
+
         <div class="table-container">
+
           <table id="salesHistoryTable">
+
             <thead>
+
               <tr>
+
                 <th>Produto</th>
+
                 <th>Quantidade</th>
+
                 <th>Total (R$)</th>
+
                 <th>Data</th>
+
               </tr>
+
             </thead>
+
             <tbody>
+
               <!-- Vendas serão inseridas aqui via JavaScript -->
+
             </tbody>
+
           </table>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
 
   <script src="script.js"></script>
+
 </body>
+
 </html>
