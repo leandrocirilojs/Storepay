@@ -1,49 +1,41 @@
 // Função para alternar entre as guias
-function openTab(tabName, element = null) {
+function openTab(tabName) {
   const tabcontents = document.querySelectorAll('.tabcontent');
   const tablinks = document.querySelectorAll('.tablink');
 
+  // Esconde todo o conteúdo das guias
   tabcontents.forEach((tab) => {
     tab.style.display = 'none';
   });
 
+  // Remove a classe 'active' de todos os botões
   tablinks.forEach((tab) => {
     tab.classList.remove('active');
   });
 
+  // Mostra a guia selecionada e marca o botão como ativo
   document.getElementById(tabName).style.display = 'block';
-
-  if (element) {
-    element.classList.add('active');
-  }
+  event.currentTarget.classList.add('active');
 }
 
 // Função para salvar produtos no localStorage
 function saveProduct(product) {
-  let products = loadProducts();
+  let products = JSON.parse(localStorage.getItem('products')) || [];
   products.push(product);
   localStorage.setItem('products', JSON.stringify(products));
 }
-
-
 
 // Função para carregar produtos do localStorage
 function loadProducts() {
   return JSON.parse(localStorage.getItem('products')) || [];
 }
 
-
-
-
 // Função para salvar vendas no localStorage
 function saveSale(sale) {
-  let sales = loadSales();
+  let sales = JSON.parse(localStorage.getItem('sales')) || [];
   sales.push(sale);
   localStorage.setItem('sales', JSON.stringify(sales));
 }
-
-
-
 
 // Função para carregar vendas do localStorage
 function loadSales() {
@@ -53,11 +45,7 @@ function loadSales() {
 // Função para renderizar a tabela de produtos
 function renderProducts() {
   const products = loadProducts();
-
   const tableBody = document.querySelector('#productTable tbody');
-
-  if (!tableBody) return; // Evita erro se o elemento não existir
-
   tableBody.innerHTML = '';
 
   products.forEach((product, index) => {
@@ -73,16 +61,15 @@ function renderProducts() {
     tableBody.appendChild(row);
   });
 
+  // Atualizar selects de adicionar estoque e vendas
   updateProductSelects();
 }
 
-// Atualiza os selects de produtos
+// Função para atualizar os selects de produtos
 function updateProductSelects() {
   const products = loadProducts();
   const addStockProductSelect = document.getElementById('addStockProduct');
   const saleProductSelect = document.getElementById('saleProduct');
-
-  if (!addStockProductSelect || !saleProductSelect) return;
 
   addStockProductSelect.innerHTML = '<option value="">Selecione um produto</option>';
   saleProductSelect.innerHTML = '<option value="">Selecione um produto</option>';
@@ -96,13 +83,100 @@ function updateProductSelects() {
   });
 }
 
-// Renderiza o histórico de vendas
+// Função para adicionar um produto
+document.getElementById('productForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const productName = document.getElementById('productName').value;
+  const productPrice = parseFloat(document.getElementById('productPrice').value);
+  const productQuantity = parseInt(document.getElementById('productQuantity').value);
+
+  if (productName && productPrice && productQuantity) {
+    const product = {
+      name: productName,
+      price: productPrice,
+      quantity: productQuantity
+    };
+
+    saveProduct(product);
+    renderProducts();
+    document.getElementById('productForm').reset();
+  } else {
+    alert('Preencha todos os campos!');
+  }
+});
+
+// Função para excluir um produto
+function deleteProduct(index) {
+  let products = loadProducts();
+  products.splice(index, 1);
+  localStorage.setItem('products', JSON.stringify(products));
+  renderProducts();
+}
+
+// Função para adicionar mais produtos ao estoque
+document.getElementById('addStockForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const productIndex = document.getElementById('addStockProduct').value;
+  const addQuantity = parseInt(document.getElementById('addStockQuantity').value);
+
+  if (productIndex === '' || isNaN(addQuantity) || addQuantity <= 0) {
+    alert('Selecione um produto e insira uma quantidade válida!');
+    return;
+  }
+
+  let products = loadProducts();
+  products[productIndex].quantity += addQuantity;
+  localStorage.setItem('products', JSON.stringify(products));
+  renderProducts();
+  document.getElementById('addStockForm').reset();
+});
+
+// Função para registrar uma venda
+document.getElementById('saleForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const productIndex = document.getElementById('saleProduct').value;
+  const saleQuantity = parseInt(document.getElementById('saleQuantity').value);
+
+  if (productIndex === '' || isNaN(saleQuantity) || saleQuantity <= 0) {
+    alert('Selecione um produto e insira uma quantidade válida!');
+    return;
+  }
+
+  let products = loadProducts();
+  const product = products[productIndex];
+
+  if (saleQuantity > product.quantity) {
+    alert('Quantidade em estoque insuficiente!');
+    return;
+  }
+
+  // Atualizar estoque
+  product.quantity -= saleQuantity;
+  localStorage.setItem('products', JSON.stringify(products));
+
+  // Registrar a venda
+  const sale = {
+    productName: product.name,
+    quantity: saleQuantity,
+    total: saleQuantity * product.price,
+    date: new Date().toLocaleString()
+  };
+  saveSale(sale);
+
+  // Atualizar a interface
+  renderProducts();
+  renderSalesHistory();
+  renderSalesReport();
+  document.getElementById('saleForm').reset();
+});
+
+// Função para renderizar o histórico de vendas
 function renderSalesHistory() {
   const sales = loadSales();
   const tableBody = document.querySelector('#salesHistoryTable tbody');
-
-  if (!tableBody) return;
-
   tableBody.innerHTML = '';
 
   sales.forEach((sale) => {
@@ -117,17 +191,23 @@ function renderSalesHistory() {
   });
 }
 
-// Renderiza o relatório de vendas
+// Função para renderizar o relatório de vendas
 function renderSalesReport() {
   const sales = loadSales();
   let totalSales = 0;
   const productSales = {};
 
+  // Calcular total de vendas e vendas por produto
   sales.forEach((sale) => {
     totalSales += sale.total;
-    productSales[sale.productName] = (productSales[sale.productName] || 0) + sale.quantity;
+    if (productSales[sale.productName]) {
+      productSales[sale.productName] += sale.quantity;
+    } else {
+      productSales[sale.productName] = sale.quantity;
+    }
   });
 
+  // Encontrar o produto mais vendido
   let bestSellingProduct = 'Nenhum';
   let maxQuantity = 0;
   for (const [product, quantity] of Object.entries(productSales)) {
@@ -137,36 +217,14 @@ function renderSalesReport() {
     }
   }
 
+  // Atualizar a interface
   document.getElementById('totalSales').textContent = totalSales.toFixed(2);
   document.getElementById('bestSellingProduct').textContent = bestSellingProduct;
 }
 
-function searchProduct() {
-  let search = document.getElementById('searchProduct').value.toLowerCase();
-  let products = loadProducts();
-  const tableBody = document.querySelector('#productTable tbody');
-  tableBody.innerHTML = '';
-
-  products.forEach((product, index) => {
-    if (product.name.toLowerCase().includes(search)) {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${product.name}</td>
-        <td>${product.price.toFixed(2)}</td>
-        <td>${product.quantity}</td>
-        <td class="actions">
-          <button onclick="deleteProduct(${index})">Excluir</button>
-        </td>
-      `;
-      tableBody.appendChild(row);
-    }
-  });
-}
-
-// Garante que os dados sejam carregados corretamente ao iniciar a página
+// Renderizar produtos, histórico e relatório ao carregar a página
 window.onload = () => {
-  alert("Pagina Carregada");
-  openTab('Estoque'); // Abre a guia Estoque
+  openTab('Estoque'); // Abre a guia Estoque por padrão
   renderProducts();
   renderSalesHistory();
   renderSalesReport();
