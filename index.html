@@ -1,192 +1,882 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Conferência IA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-  <meta charset="UTF-8">
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+:root{
+  --bg:#f0f2f5;
+  --white:#ffffff;
+  --navy:#0d1f3c;
+  --navy2:#1a2e52;
+  --green:#22c55e;
+  --green-btn:#4ade80;
+  --green-light:#dcfce7;
+  --red:#ef4444;
+  --red-light:#fee2e2;
+  --orange:#f97316;
+  --orange-light:#fff3e0;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --text:#0d1f3c;
+}
 
-  <title>Software de Mercado</title>
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden;}
 
-  <link rel="stylesheet" href="styles.css">
+/* ── TOPBAR ── */
+.topbar{background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;}
+.topbar-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px;color:var(--navy);}
+.topbar-logo .icon-box{width:28px;height:28px;background:var(--navy);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ef4444);display:flex;align-items:center;justify-content:center;font-size:14px;color:white;font-weight:700;}
+.icon-btn{background:none;border:none;cursor:pointer;font-size:19px;color:var(--muted);padding:4px;}
 
+/* ── SCREENS ── */
+.screen{display:none;padding-bottom:90px;min-height:calc(100vh - 57px);}
+.screen.active{display:block;}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:200;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 0 8px;gap:3px;cursor:pointer;background:none;border:none;color:var(--muted);font-family:'Inter',sans-serif;font-size:10px;font-weight:600;transition:color .15s;letter-spacing:.3px;text-transform:uppercase;}
+.nav-item.active{color:var(--navy);}
+.nav-icon{font-size:21px;position:relative;}
+.nav-dot{display:none;width:6px;height:6px;background:var(--navy);border-radius:50%;position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);}
+.nav-item.active .nav-dot{display:block;}
+
+/* ══ DASHBOARD ══ */
+.hero-card{background:var(--navy);margin:16px 16px 0;border-radius:18px;padding:24px 20px 20px;color:white;}
+.hero-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:10px;}
+.hero-title{font-size:24px;font-weight:800;line-height:1.25;margin-bottom:20px;}
+.btn-hero{background:var(--green-btn);color:var(--navy);border:none;border-radius:12px;padding:14px 20px;font-family:'Inter',sans-serif;font-weight:700;font-size:14px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s;}
+.btn-hero:hover{opacity:.9;}
+
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 16px 0;}
+.stat-card{background:var(--white);border-radius:14px;padding:18px 16px;}
+.stat-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.stat-value{font-size:30px;font-weight:900;color:var(--navy);line-height:1;}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:20px 16px 10px;}
+.section-title{font-size:18px;font-weight:800;color:var(--navy);}
+.badge-alert{background:#7c3aed;color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;margin-right:6px;}
+.link-text{font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;}
+
+.cconf-card{background:var(--white);border-radius:14px;margin:0 16px 12px;overflow:hidden;border:1px solid var(--border);}
+.cconf-bar{height:4px;}
+.cconf-bar.green{background:var(--green);}
+.cconf-bar.red{background:var(--red);}
+.cconf-bar.navy{background:var(--navy);}
+.cconf-body{padding:14px 16px 16px;}
+.cconf-meta{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;}
+.cconf-title{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.progress-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.progress-track{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;}
+.progress-fill.green{background:var(--green);}
+.progress-fill.red{background:var(--red);}
+.progress-fill.navy{background:var(--navy);}
+.cconf-footer{display:flex;align-items:center;justify-content:space-between;}
+.cconf-time{font-size:12px;color:var(--muted);}
+.diverg-tag{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--red);margin-bottom:10px;}
+.btn-sm{font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:8px 18px;border-radius:8px;border:none;cursor:pointer;transition:.2s;}
+.btn-sm.outline{background:none;border:1.5px solid var(--border);color:var(--navy);}
+.btn-sm.outline:hover{border-color:var(--navy);}
+
+/* ══ SCANNER ══ */
+.scanner-wrap{padding:16px;}
+.apikey-card{background:var(--white);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid var(--border);}
+.field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px;}
+.apikey-row{display:flex;gap:8px;}
+.apikey-row input{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;outline:none;transition:border-color .2s;}
+.apikey-row input:focus{border-color:var(--navy);}
+.btn-eye{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:0 14px;cursor:pointer;font-size:16px;transition:.2s;}
+.btn-eye:hover{border-color:var(--navy);}
+.apikey-hint{font-size:11px;color:var(--muted);margin-top:7px;}
+.apikey-hint a{color:var(--navy);font-weight:600;}
+
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.upload-card{background:var(--white);border:2px dashed var(--border);border-radius:14px;padding:16px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .2s,background .2s;}
+.upload-card:hover{border-color:var(--navy);background:#f8f9fc;}
+.upload-card.has-image{border-style:solid;border-color:var(--green);}
+.upload-card input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-icon-wrap{width:40px;height:40px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px;}
+.upload-card-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.upload-card-sub{font-size:11px;color:var(--muted);line-height:1.4;}
+.check-badge{display:none;position:absolute;top:10px;right:10px;background:var(--green);color:white;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.has-image .check-badge{display:block;}
+.preview-img{width:100%;height:90px;object-fit:cover;border-radius:8px;margin-top:10px;display:none;}
+.preview-img.show{display:block;}
+
+.tip-text{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;font-weight:500;}
+.tip-text.ready{color:var(--green);font-weight:700;}
+
+.btn-analyze{width:100%;padding:16px;background:var(--navy);color:white;font-family:'Inter',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:14px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.3px;}
+.btn-analyze:hover:not(:disabled){opacity:.88;}
+.btn-analyze:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
+
+.loading-card{display:none;background:var(--white);border-radius:14px;padding:28px 20px;text-align:center;margin-bottom:14px;border:1px solid var(--border);}
+.loading-card.show{display:block;}
+.spinner{width:42px;height:42px;border:3px solid var(--bg);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:12px;}
+.step{font-size:13px;color:var(--muted);line-height:2.1;font-weight:500;}
+.step.active{color:var(--navy);font-weight:700;}
+
+.error-card{display:none;background:var(--red-light);border:1px solid var(--red);border-radius:12px;padding:14px;font-size:13px;color:var(--red);margin-bottom:14px;font-weight:600;}
+.error-card.show{display:block;}
+
+/* ══ RESULTS ══ */
+.results-wrap{padding:16px;}
+.div-alert{border-radius:14px;padding:16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;}
+.div-alert.ok{background:var(--green-light);}
+.div-alert.error{background:#fef3c7;border:1px solid #fbbf24;}
+.div-alert-icon{font-size:22px;margin-top:1px;}
+.div-alert-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.div-alert-sub{font-size:12px;color:var(--muted);}
+
+.summary-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.sum-card{background:var(--white);border-radius:12px;padding:14px 12px;border-left:4px solid transparent;}
+.sum-card.ok{border-left-color:var(--green);}
+.sum-card.miss{border-left-color:var(--red);}
+.sum-card.extra{border-left-color:var(--orange);}
+.sum-num{font-size:28px;font-weight:900;line-height:1;}
+.sum-num.ok{color:var(--green);}
+.sum-num.miss{color:var(--red);}
+.sum-num.extra{color:var(--orange);}
+.sum-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:3px;}
+
+.table-card{background:var(--white);border-radius:14px;overflow:hidden;margin-bottom:14px;border:1px solid var(--border);}
+.table-head{background:var(--navy);display:grid;grid-template-columns:1fr 56px 64px;padding:10px 14px;gap:4px;}
+.th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.6);}
+.th.right{text-align:right;}
+
+.item-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);}
+.item-row:last-child{border-bottom:none;}
+.item-status-bar{width:4px;flex-shrink:0;}
+.item-status-bar.ok{background:var(--green);}
+.item-status-bar.miss{background:var(--red);}
+.item-status-bar.extra{background:var(--orange);}
+.item-info{flex:1;padding:12px 8px 12px 12px;min-width:0;}
+.item-icon-name{display:flex;align-items:center;gap:6px;}
+.item-name{font-size:13px;font-weight:700;color:var(--navy);}
+.item-sku{font-size:11px;color:var(--muted);margin-top:1px;}
+.item-qtds{display:flex;align-items:center;padding:12px 14px 12px 4px;gap:6px;}
+.item-num{font-size:13px;font-weight:700;min-width:42px;text-align:right;}
+.item-num.red{color:var(--red);}
+.item-num.orange{color:var(--orange);}
+
+.pending-warn{background:var(--red-light);border:1px solid var(--red);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.pending-warn-title{font-size:13px;font-weight:800;color:var(--red);}
+.pending-warn-sub{font-size:11px;color:var(--red);opacity:.8;margin-top:1px;}
+
+.obs-card{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px;margin-bottom:14px;}
+.obs-title{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:5px;}
+.obs-text{font-size:13px;color:var(--muted);line-height:1.6;}
+
+.actions-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
+.btn-action{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;padding:14px;border-radius:12px;border:none;cursor:pointer;transition:.2s;text-align:center;}
+.btn-action.outline{background:var(--white);border:2px solid var(--border);color:var(--navy);}
+.btn-action.outline:hover{border-color:var(--navy);}
+.btn-action.solid{background:var(--navy);color:white;}
+.btn-action.solid:hover{opacity:.88;}
+
+/* ══ HISTÓRICO ══ */
+.hist-wrap{padding:16px;}
+.hist-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.hist-page-title{font-size:22px;font-weight:900;color:var(--navy);}
+
+.hist-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.hist-stat-card{background:var(--white);border-radius:12px;padding:14px 12px;text-align:center;border:1px solid var(--border);}
+.hist-stat-num{font-size:24px;font-weight:900;color:var(--navy);}
+.hist-stat-lbl{font-size:10px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+
+.hist-filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;}
+.hist-filter{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);cursor:pointer;white-space:nowrap;transition:.15s;}
+.hist-filter.active{background:var(--navy);color:white;border-color:var(--navy);}
+
+.hist-item{background:var(--white);border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border);animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hist-bar{height:4px;}
+.hist-bar.ok{background:var(--green);}
+.hist-bar.warn{background:var(--orange);}
+.hist-bar.error{background:var(--red);}
+.hist-body{padding:14px 16px;}
+.hist-id{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px;}
+.hist-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.hist-name{font-size:16px;font-weight:800;color:var(--navy);}
+.hist-status{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.hist-status.ok{background:var(--green-light);color:var(--green);}
+.hist-status.error{background:var(--red-light);color:var(--red);}
+.hist-status.warn{background:var(--orange-light);color:var(--orange);}
+.hist-progress-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.hist-track{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;}
+.hist-fill{height:100%;border-radius:3px;}
+.hist-fill.ok{background:var(--green);}
+.hist-fill.error{background:var(--red);}
+.hist-fill.warn{background:var(--orange);}
+.hist-pct{font-size:12px;font-weight:700;color:var(--navy);}
+.hist-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.hist-chip{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;}
+.hist-chip.ok{background:var(--green-light);color:var(--green);}
+.hist-chip.miss{background:var(--red-light);color:var(--red);}
+.hist-chip.extra{background:var(--orange-light);color:var(--orange);}
+.hist-chip.neutral{background:var(--bg);color:var(--muted);}
+.hist-footer-row{display:flex;align-items:center;justify-content:space-between;}
+.hist-date{font-size:11px;color:var(--muted);}
+.hist-detail-btn{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);color:var(--navy);cursor:pointer;transition:.15s;}
+.hist-detail-btn:hover{border-color:var(--navy);}
+
+.hist-empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.hist-empty .emoji{font-size:40px;margin-bottom:12px;}
+.hist-empty p{font-size:14px;line-height:1.7;}
+
+.btn-clear{font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);color:var(--red);cursor:pointer;transition:.15s;}
+.btn-clear:hover{border-color:var(--red);}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-sheet{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:430px;max-height:85vh;overflow-y:auto;padding:20px 16px 32px;}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;}
+.modal-title{font-size:18px;font-weight:800;color:var(--navy);}
+.modal-close{background:var(--bg);border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);}
+.modal-close:hover{color:var(--navy);}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.modal-item-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+.modal-item-row:last-child{border-bottom:none;}
+.modal-item-icon{font-size:18px;flex-shrink:0;}
+.modal-item-name{flex:1;font-size:13px;font-weight:600;color:var(--navy);}
+.modal-item-qtds{font-size:12px;color:var(--muted);text-align:right;line-height:1.6;}
+</style>
 </head>
-
 <body>
 
-  <div class="app-container">
-
-    <!-- Cabeçalho -->
-
-    <header class="app-header">
-
-      <h1>Software de Mercado</h1>
-
-    </header>
-
-    <!-- Guias -->
-
-    <nav class="app-tabs">
-
-      <button class="tablink" onclick="openTab('Estoque')">Estoque</button>
-
-      <button class="tablink" onclick="openTab('Cadastro')">Cadastro</button>
-
-      <button class="tablink" onclick="openTab('Vendas')">Vendas</button>
-
-      <button class="tablink" onclick="openTab('Relatorio')">Relatório</button>
-
-    </nav>
-
-    <!-- Conteúdo das Guias -->
-
-    <div class="app-content">
-
-      <div id="Estoque" class="tabcontent">
-      <input type="text" id="searchProduct" placeholder="Buscar produto..." onkeyup="searchProduct()">
-
-        <h2>Estoque</h2>
-
-        <div class="table-container">
-
-          <table id="productTable">
-
-            <thead>
-
-              <tr>
-
-                <th>Nome</th>
-
-                <th>Preço (R$)</th>
-
-                <th>Quantidade</th>
-
-                <th>Ações</th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              <!-- Produtos serão inseridos aqui via JavaScript -->
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-      <div id="Cadastro" class="tabcontent" style="display:none;">
-
-        <h2>Cadastro de Produtos</h2>
-
-        <form id="productForm" class="app-form">
-
-          <input type="text" id="productName" placeholder="Nome do Produto" required>
-
-          <input type="number" id="productPrice" placeholder="Preço" required>
-
-          <input type="number" id="productQuantity" placeholder="Quantidade" required>
-
-          <button type="submit">Adicionar</button>
-
-        </form>
-
-        <h2>Adicionar ao Estoque</h2>
-
-        <form id="addStockForm" class="app-form">
-
-          <select id="addStockProduct" required>
-
-            <option value="">Selecione um produto</option>
-
-          </select>
-
-          <input type="number" id="addStockQuantity" placeholder="Quantidade" required>
-
-          <button type="submit">Adicionar ao Estoque</button>
-
-        </form>
-
-      </div>
-
-      <div id="Vendas" class="tabcontent" style="display:none;">
-
-        <h2>Registrar Venda</h2>
-
-        <form id="saleForm" class="app-form">
-
-          <select id="saleProduct" required>
-
-            <option value="">Selecione um produto</option>
-
-          </select>
-
-          <input type="number" id="saleQuantity" placeholder="Quantidade" required>
-
-          <button type="submit">Registrar Venda</button>
-
-        </form>
-
-      </div>
-
-      <div id="Relatorio" class="tabcontent" style="display:none;">
-
-        <h2>Relatório de Vendas</h2>
-
-        <div id="salesReport" class="app-report">
-
-          <p><strong>Total de Vendas:</strong> R$ <span id="totalSales">0.00</span></p>
-
-          <p><strong>Produto Mais Vendido:</strong> <span id="bestSellingProduct">Nenhum</span></p>
-
-        </div>
-
-        <h2>Histórico de Vendas</h2>
-
-        <div class="table-container">
-
-          <table id="salesHistoryTable">
-
-            <thead>
-
-              <tr>
-
-                <th>Produto</th>
-
-                <th>Quantidade</th>
-
-                <th>Total (R$)</th>
-
-                <th>Data</th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              <!-- Vendas serão inseridas aqui via JavaScript -->
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-    </div>
-
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="icon-box">🗂</div>
+    Conferência IA
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" onclick="goTo('scanner')">⚡</button>
+    <div class="avatar">M</div>
+  </div>
+</div>
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div class="screen active" id="screen-dashboard">
+  <div class="hero-card">
+    <div class="hero-label">Operação Ativa</div>
+    <div class="hero-title">Agilize sua<br>conferência<br>com inteligência.</div>
+    <button class="btn-hero" onclick="goTo('scanner')">
+      <span style="font-size:18px">＋</span> Iniciar Nova Conferência
+    </button>
   </div>
 
-  <script src="script.js"></script>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Total de Itens</div>
+      <div class="stat-value" id="statHoje">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Conferências</div>
+      <div class="stat-value" id="statSemana">0</div>
+    </div>
+  </div>
 
+  <div class="section-header">
+    <div class="section-title">Conferências<br>recentes</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="badge-alert" id="alertBadge" style="display:none">0 Alertas</span>
+      <span class="link-text" onclick="goTo('historico')">Ver tudo</span>
+    </div>
+  </div>
+
+  <div id="dashPendentes">
+    <div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">
+      <div style="font-size:36px;margin-bottom:8px">📋</div>
+      Nenhuma conferência ainda.<br>Inicie uma nova acima!
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SCANNER ══════════ -->
+<div class="screen" id="screen-scanner">
+  <div class="scanner-wrap">
+    <div style="font-size:22px;font-weight:900;color:var(--navy);margin-bottom:16px;">Nova Conferência</div>
+
+    <div class="apikey-card">
+      <div class="field-label">🔑 Chave API Groq</div>
+      <div class="apikey-row">
+        <input type="password" id="inputApiKey" placeholder="gsk_..." oninput="checkReady()">
+        <button class="btn-eye" onclick="toggleKey()">👁</button>
+      </div>
+      <div class="apikey-hint">Grátis em <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a></div>
+    </div>
+
+    <div class="upload-grid">
+      <div class="upload-card" id="cardNota">
+        <span class="check-badge">✓ OK</span>
+        <input type="file" accept="image/*" capture="environment" id="inputNota" onchange="handleUpload('nota',this)">
+        <div class="upload-icon-wrap">🧾</div>
+        <div class="upload-card-title">Nota / Pedido</div>
+        <div class="upload-card-sub">Foto da nota fiscal ou lista do pedido</div>
+        <img class="preview-img" id="previewNota" alt="">
+      </div>
+      <div class="upload-card" id="cardCarrinho">
+        <span class="check-badge">✓ OK</span>
+        <input type="file" accept="image/*" capture="environment" id="inputCarrinho" onchange="handleUpload('carrinho',this)">
+        <div class="upload-icon-wrap">📦</div>
+        <div class="upload-card-title">Carrinho / Sacola</div>
+        <div class="upload-card-sub">Foto dos produtos separados</div>
+        <img class="preview-img" id="previewCarrinho" alt="">
+      </div>
+    </div>
+
+    <p class="tip-text" id="tipText">Adicione as duas fotos para liberar a análise</p>
+
+    <div class="loading-card" id="loadingBox">
+      <div class="spinner"></div>
+      <div class="loading-title">Analisando pedido...</div>
+      <div>
+        <div class="step active" id="step1">📄 Lendo itens da nota fiscal...</div>
+        <div class="step" id="step2">🛒 Identificando produtos no carrinho...</div>
+        <div class="step" id="step3">⚖️ Comparando quantidades e itens...</div>
+        <div class="step" id="step4">✅ Gerando relatório de conferência...</div>
+      </div>
+    </div>
+
+    <div class="error-card" id="errorBox"></div>
+
+    <button class="btn-analyze" id="btnAnalyze" onclick="analisar()" disabled>
+      🔍 Analisar com IA
+    </button>
+  </div>
+</div>
+
+<!-- ══════════ RESULTS ══════════ -->
+<div class="screen" id="screen-results">
+  <div class="results-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)" id="resultNFLabel">NOTA FISCAL</div>
+      <button class="icon-btn" onclick="goTo('scanner')">✕</button>
+    </div>
+    <div style="font-size:22px;font-weight:900;color:var(--navy);margin-bottom:14px;">Itens Conferidos</div>
+
+    <div class="div-alert" id="divAlert">
+      <div class="div-alert-icon" id="divAlertIcon">✅</div>
+      <div>
+        <div class="div-alert-title" id="divAlertTitle">Conferência OK</div>
+        <div class="div-alert-sub" id="divAlertSub"></div>
+      </div>
+    </div>
+
+    <div class="summary-cards">
+      <div class="sum-card ok"><div class="sum-num ok" id="countOk">0</div><div class="sum-lbl">Status OK</div></div>
+      <div class="sum-card miss"><div class="sum-num miss" id="countMiss">0</div><div class="sum-lbl">Faltantes</div></div>
+      <div class="sum-card extra"><div class="sum-num extra" id="countExtra">0</div><div class="sum-lbl">Excedentes</div></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-head">
+        <div class="th">Item (Descrição)</div>
+        <div class="th right">Esperado</div>
+        <div class="th right">Encontrado</div>
+      </div>
+      <div id="itemsTable"></div>
+    </div>
+
+    <div class="pending-warn" id="pendingWarn" style="display:none">
+      <span style="font-size:20px">⚠️</span>
+      <div>
+        <div class="pending-warn-title">Pendências identificadas</div>
+        <div class="pending-warn-sub" id="pendingWarnSub"></div>
+      </div>
+    </div>
+
+    <div class="obs-card" id="obsCard" style="display:none">
+      <div class="obs-title">💬 Observações da IA</div>
+      <div class="obs-text" id="obsText"></div>
+    </div>
+
+    <div class="actions-row">
+      <button class="btn-action outline" onclick="aprovarPendencias()">Aprovar com Pendências</button>
+      <button class="btn-action solid" onclick="concluir()">Concluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ HISTÓRICO ══════════ -->
+<div class="screen" id="screen-historico">
+  <div class="hist-wrap">
+    <div class="hist-header-row">
+      <div class="hist-page-title">Histórico</div>
+      <button class="btn-clear" id="btnClearHist" style="display:none" onclick="clearHistory()">🗑 Limpar</button>
+    </div>
+
+    <div class="hist-stats-row">
+      <div class="hist-stat-card">
+        <div class="hist-stat-num" id="hsTotalConf">0</div>
+        <div class="hist-stat-lbl">Conferências</div>
+      </div>
+      <div class="hist-stat-card">
+        <div class="hist-stat-num" id="hsTotalItens">0</div>
+        <div class="hist-stat-lbl">Itens Total</div>
+      </div>
+      <div class="hist-stat-card">
+        <div class="hist-stat-num" id="hsTotalAlert" style="color:var(--red)">0</div>
+        <div class="hist-stat-lbl">Com Alerta</div>
+      </div>
+    </div>
+
+    <div class="hist-filters">
+      <button class="hist-filter active" onclick="filterHist('all',this)">Todos</button>
+      <button class="hist-filter" onclick="filterHist('ok',this)">✅ OK</button>
+      <button class="hist-filter" onclick="filterHist('miss',this)">❌ Faltando</button>
+      <button class="hist-filter" onclick="filterHist('extra',this)">⚠️ Excedente</button>
+    </div>
+
+    <div id="histContainer">
+      <div class="hist-empty"><div class="emoji">📋</div><p>Nenhuma conferência ainda.<br>Inicie uma nova análise.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-dashboard" onclick="goTo('dashboard')">
+    <div class="nav-icon">⊞<div class="nav-dot"></div></div>Dashboard
+  </button>
+  <button class="nav-item" id="nav-scanner" onclick="goTo('scanner')">
+    <div class="nav-icon">⊡<div class="nav-dot"></div></div>Scanner
+  </button>
+  <button class="nav-item" id="nav-historico" onclick="goTo('historico')">
+    <div class="nav-icon">↺<div class="nav-dot"></div></div>Histórico
+  </button>
+</nav>
+
+<!-- Modal detalhe -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-close" onclick="closeModal()">Fechar ✕</button>
+    </div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div id="modalItems"></div>
+  </div>
+</div>
+
+<script>
+// ═══ NAV ═══
+const SCREENS = ['dashboard','scanner','results','historico'];
+function goTo(name){
+  SCREENS.forEach(s=>{
+    document.getElementById('screen-'+s)?.classList.remove('active');
+    document.getElementById('nav-'+s)?.classList.remove('active');
+  });
+  document.getElementById('screen-'+name)?.classList.add('active');
+  document.getElementById('nav-'+name)?.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ═══ STATE ═══
+const state = {nota:null,carrinho:null};
+let historyData = [];
+try{ historyData = JSON.parse(localStorage.getItem('conf_history')||'[]'); }catch(e){}
+let currentFilter = 'all';
+
+// ═══ UPLOAD ═══
+function handleUpload(tipo,input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    state[tipo]=e.target.result;
+    const key=tipo==='nota'?'Nota':'Carrinho';
+    const prev=document.getElementById('preview'+key);
+    prev.src=e.target.result; prev.classList.add('show');
+    document.getElementById('card'+key).classList.add('has-image');
+    checkReady();
+  };
+  reader.readAsDataURL(file);
+}
+function toggleKey(){
+  const inp=document.getElementById('inputApiKey');
+  inp.type=inp.type==='password'?'text':'password';
+}
+function checkReady(){
+  const btn=document.getElementById('btnAnalyze');
+  const tip=document.getElementById('tipText');
+  const key=document.getElementById('inputApiKey').value.trim();
+  if(!key){btn.disabled=true;tip.textContent='Insira sua chave da API Groq para continuar';tip.className='tip-text';return;}
+  if(state.nota&&state.carrinho){btn.disabled=false;tip.textContent='✅ Tudo pronto! Clique em Analisar com IA';tip.className='tip-text ready';}
+  else{const m=!state.nota?'foto da nota fiscal':'foto do carrinho';tip.textContent=`Ainda falta a ${m}`;tip.className='tip-text';btn.disabled=true;}
+}
+
+// ═══ ANALYZE ═══
+async function animateSteps(){
+  const ids=['step1','step2','step3','step4'];
+  ids.forEach((id,i)=>setTimeout(()=>{ids.forEach(s=>document.getElementById(s).classList.remove('active'));document.getElementById(id).classList.add('active');},i*1400));
+}
+async function analisar(){
+  const apiKey=document.getElementById('inputApiKey').value.trim();
+  if(!apiKey) return;
+  document.getElementById('errorBox').classList.remove('show');
+  document.getElementById('loadingBox').classList.add('show');
+  document.getElementById('btnAnalyze').disabled=true;
+  animateSteps();
+
+  const prompt=`Você é um sistema rigoroso de conferência de pedidos de supermercado/mercado.
+
+Você recebeu DUAS imagens:
+- IMAGEM 1: Nota fiscal ou lista de pedido (o que foi PEDIDO)
+- IMAGEM 2: Foto do carrinho ou sacola com os produtos separados (o que está FÍSICAMENTE presente)
+
+INSTRUÇÕES OBRIGATÓRIAS — siga todas sem exceção:
+
+PASSO 1 — Leia TODOS os itens da IMAGEM 1 (nota/pedido), anotando nome e quantidade de cada um.
+
+PASSO 2 — Identifique TODOS os produtos visíveis na IMAGEM 2 (carrinho/sacola), mesmo que não estejam na nota.
+
+PASSO 3 — Para cada item da nota: verifique se está no carrinho com a quantidade correta.
+
+PASSO 4 — MUITO IMPORTANTE: Para cada produto visível no carrinho que NÃO está na nota ou está em quantidade maior do que o pedido, você DEVE listá-lo com status "a_mais". Não ignore nenhum produto extra.
+
+REGRAS de classificação:
+- "ok" → produto está na nota E no carrinho com quantidade correta
+- "faltando" → produto está na nota MAS não foi encontrado no carrinho (ou quantidade menor)
+- "a_mais" → produto está no carrinho MAS não está na nota, OU quantidade no carrinho é MAIOR que na nota
+
+ATENÇÃO: É muito comum haver produtos a mais no carrinho por engano. Você DEVE detectar e reportar todos eles. Nunca omita um item "a_mais".
+
+Responda SOMENTE com JSON válido, sem markdown, sem texto antes ou depois:
+{
+  "pedido_id": "NF-XXXXX",
+  "itens": [
+    {"nome": "Nome do produto", "qtd_nota": "quantidade na nota ou 'não consta'", "qtd_carrinho": "quantidade no carrinho ou 'não encontrado'", "status": "ok"}
+  ],
+  "observacoes": "resumo geral e alertas importantes"
+}`;
+
+  try{
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify({
+        model:'meta-llama/llama-4-scout-17b-16e-instruct',
+        max_tokens:1500,temperature:0.1,
+        messages:[{role:'user',content:[
+          {type:'image_url',image_url:{url:state.nota}},
+          {type:'image_url',image_url:{url:state.carrinho}},
+          {type:'text',text:prompt}
+        ]}]
+      })
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`Erro ${res.status}`);}
+    const data=await res.json();
+    const raw=data.choices?.[0]?.message?.content||'';
+    const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderResults(result);
+  }catch(err){
+    document.getElementById('loadingBox').classList.remove('show');
+    document.getElementById('btnAnalyze').disabled=false;
+    const box=document.getElementById('errorBox');
+    box.textContent='❌ Erro: '+err.message;
+    box.classList.add('show');
+    playError();
+  }
+}
+
+// ═══ SONS ═══
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playSuccess(){
+  try{
+    const ctx = getAudioCtx();
+    // Três notas ascendentes: acorde de vitória
+    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + i * 0.12;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.25, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      osc.start(t); osc.stop(t + 0.4);
+    });
+  }catch(e){}
+}
+
+function playAlert(){
+  try{
+    const ctx = getAudioCtx();
+    // Duas notas descendentes + buzz: sinal de atenção
+    const sequence = [
+      {freq:880, t:0,    dur:0.15, type:'square', vol:0.15},
+      {freq:880, t:0.18, dur:0.15, type:'square', vol:0.15},
+      {freq:440, t:0.38, dur:0.35, type:'sawtooth', vol:0.1},
+    ];
+    sequence.forEach(({freq,t,dur,type,vol})=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.value = freq;
+      const st = ctx.currentTime + t;
+      gain.gain.setValueAtTime(0, st);
+      gain.gain.linearRampToValueAtTime(vol, st + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, st + dur);
+      osc.start(st); osc.stop(st + dur);
+    });
+  }catch(e){}
+}
+
+function playError(){
+  try{
+    const ctx = getAudioCtx();
+    // Tom grave e curto: erro
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(300, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.4);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(); osc.stop(ctx.currentTime + 0.4);
+  }catch(e){}
+}
+
+// ═══ RENDER ═══
+function renderResults(result){
+  document.getElementById('loadingBox').classList.remove('show');
+  const itens=result.itens||[];
+  const obs=result.observacoes||'';
+  const nfId=result.pedido_id||('NF-'+Date.now());
+  const ok=itens.filter(i=>i.status==='ok');
+  const miss=itens.filter(i=>i.status==='faltando');
+  const extra=itens.filter(i=>i.status==='a_mais');
+
+  document.getElementById('resultNFLabel').textContent=nfId;
+  document.getElementById('countOk').textContent=ok.length;
+  document.getElementById('countMiss').textContent=miss.length;
+  document.getElementById('countExtra').textContent=extra.length;
+
+  const da=document.getElementById('divAlert');
+  if(miss.length===0&&extra.length===0){
+    da.className='div-alert ok';
+    document.getElementById('divAlertIcon').textContent='✅';
+    document.getElementById('divAlertTitle').textContent='Conferência OK';
+    document.getElementById('divAlertSub').textContent=`Todos os ${ok.length} itens conferidos corretamente.`;
+    // ✅ Som de sucesso
+    setTimeout(playSuccess, 300);
+  }else{
+    da.className='div-alert error';
+    document.getElementById('divAlertIcon').textContent='⚠️';
+    document.getElementById('divAlertTitle').textContent='Com Divergência';
+    document.getElementById('divAlertSub').textContent='Ajuste manual necessário para itens faltantes.';
+    // 🔔 Som de alerta com vibração se disponível
+    setTimeout(playAlert, 300);
+    if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  }
+
+  let html='';
+  [...miss,...extra,...ok].forEach(item=>{
+    const cls=item.status==='ok'?'ok':item.status==='faltando'?'miss':'extra';
+    const icon=cls==='ok'?'✅':cls==='miss'?'🔴':'🟠';
+    const qFound=item.qtd_carrinho||'—';
+    const qFoundCls=cls==='miss'?'red':cls==='extra'?'orange':'';
+    html+=`<div class="item-row">
+      <div class="item-status-bar ${cls}"></div>
+      <div class="item-info">
+        <div class="item-icon-name"><span>${icon}</span>
+          <div><div class="item-name">${item.nome}</div>
+          <div class="item-sku">Nota: ${item.qtd_nota||'—'}</div></div>
+        </div>
+      </div>
+      <div class="item-qtds">
+        <div class="item-num">${item.qtd_nota||'—'}</div>
+        <div class="item-num ${qFoundCls}">${qFound}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('itemsTable').innerHTML=html;
+
+  const pw=document.getElementById('pendingWarn');
+  if(miss.length>0||extra.length>0){
+    pw.style.display='flex';
+    document.getElementById('pendingWarnSub').textContent=`${miss.length} iten${miss.length!==1?'s':''} faltante${miss.length!==1?'s':''} e ${extra.length} excedente${extra.length!==1?'s':''}.`;
+  }else pw.style.display='none';
+
+  const obsCard=document.getElementById('obsCard');
+  if(obs){document.getElementById('obsText').textContent=obs;obsCard.style.display='block';}
+  else obsCard.style.display='none';
+
+  const now=new Date();
+  const entry={
+    id:nfId,date:now.toLocaleString('pt-BR'),timestamp:now.getTime(),
+    ok:ok.length,miss:miss.length,extra:extra.length,total:itens.length,
+    status:miss.length>0?'miss':extra.length>0?'extra':'ok',
+    obs,itens
+  };
+  historyData.unshift(entry);
+  if(historyData.length>100) historyData=historyData.slice(0,100);
+  saveHistory(); renderHistory(); updateDashboard();
+  goTo('results');
+}
+
+// ═══ HISTORY ═══
+function saveHistory(){localStorage.setItem('conf_history',JSON.stringify(historyData));}
+function clearHistory(){
+  if(!confirm('Limpar todo o histórico?')) return;
+  historyData=[]; saveHistory(); renderHistory(); updateDashboard();
+}
+function filterHist(filter,btn){
+  currentFilter=filter;
+  document.querySelectorAll('.hist-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistory();
+}
+function renderHistory(){
+  const container=document.getElementById('histContainer');
+  document.getElementById('btnClearHist').style.display=historyData.length>0?'block':'none';
+  let filtered=historyData;
+  if(currentFilter==='ok') filtered=historyData.filter(h=>h.status==='ok');
+  if(currentFilter==='miss') filtered=historyData.filter(h=>h.status==='miss');
+  if(currentFilter==='extra') filtered=historyData.filter(h=>h.status==='extra');
+
+  if(filtered.length===0){
+    container.innerHTML=`<div class="hist-empty"><div class="emoji">📋</div><p>Nenhuma conferência${currentFilter!=='all'?' nessa categoria':''} ainda.</p></div>`;
+    return;
+  }
+  container.innerHTML=filtered.map(h=>{
+    const barCls=h.status==='ok'?'ok':h.status==='miss'?'error':'warn';
+    const stCls=h.status==='ok'?'ok':h.status==='miss'?'error':'warn';
+    const stLbl=h.status==='ok'?'Sem divergência':h.status==='miss'?'Itens faltando':'Item excedente';
+    const pct=h.total>0?Math.round((h.ok/h.total)*100):100;
+    return `<div class="hist-item">
+      <div class="hist-bar ${barCls}"></div>
+      <div class="hist-body">
+        <div class="hist-id">${h.id}</div>
+        <div class="hist-title-row">
+          <div class="hist-name">${h.status==='ok'?'✅ Conferência OK':'⚠️ Com Divergência'}</div>
+          <div class="hist-status ${stCls}">${stLbl}</div>
+        </div>
+        <div class="hist-progress-row">
+          <div class="hist-track"><div class="hist-fill ${barCls}" style="width:${pct}%"></div></div>
+          <div class="hist-pct">${pct}%</div>
+        </div>
+        <div class="hist-chips">
+          <span class="hist-chip ok">✅ ${h.ok} OK</span>
+          ${h.miss>0?`<span class="hist-chip miss">❌ ${h.miss} Faltando</span>`:''}
+          ${h.extra>0?`<span class="hist-chip extra">⚠️ ${h.extra} A mais</span>`:''}
+          <span class="hist-chip neutral">📦 ${h.total} itens</span>
+        </div>
+        <div class="hist-footer-row">
+          <div class="hist-date">🕐 ${h.date}</div>
+          <button class="hist-detail-btn" onclick="openModal('${h.id}')">Ver detalhes</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // update stats
+  document.getElementById('hsTotalConf').textContent=historyData.length;
+  document.getElementById('hsTotalItens').textContent=historyData.reduce((s,h)=>s+h.total,0);
+  document.getElementById('hsTotalAlert').textContent=historyData.filter(h=>h.status!=='ok').length;
+}
+
+function openModal(id){
+  const h=historyData.find(x=>x.id===id); if(!h) return;
+  document.getElementById('modalTitle').textContent=h.id;
+  document.getElementById('modalSub').textContent=h.date+' · '+h.total+' itens · '+h.ok+' OK · '+h.miss+' faltando';
+  let html='';
+  if(h.itens&&h.itens.length>0){
+    h.itens.forEach(item=>{
+      const icon=item.status==='ok'?'✅':item.status==='faltando'?'🔴':'🟠';
+      html+=`<div class="modal-item-row">
+        <div class="modal-item-icon">${icon}</div>
+        <div class="modal-item-name">${item.nome}</div>
+        <div class="modal-item-qtds">Nota: ${item.qtd_nota||'—'}<br>Carrinho: ${item.qtd_carrinho||'—'}</div>
+      </div>`;
+    });
+  } else html='<p style="color:var(--muted);font-size:13px;padding:16px 0">Sem detalhes disponíveis.</p>';
+  if(h.obs) html+=`<div class="obs-card" style="margin-top:14px"><div class="obs-title">💬 Observações</div><div class="obs-text">${h.obs}</div></div>`;
+  document.getElementById('modalItems').innerHTML=html;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal(e){
+  if(!e||e.target===document.getElementById('modalOverlay'))
+    document.getElementById('modalOverlay').classList.remove('show');
+}
+
+// ═══ DASHBOARD ═══
+function updateDashboard(){
+  document.getElementById('statHoje').textContent=historyData.reduce((s,h)=>s+h.total,0);
+  document.getElementById('statSemana').textContent=historyData.length;
+  const alerts=historyData.filter(h=>h.status!=='ok');
+  const badge=document.getElementById('alertBadge');
+  if(alerts.length>0){badge.style.display='inline-block';badge.textContent=`${alerts.length} Alerta${alerts.length>1?'s':''}`;}
+  else badge.style.display='none';
+
+  const container=document.getElementById('dashPendentes');
+  if(historyData.length===0){
+    container.innerHTML=`<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px"><div style="font-size:36px;margin-bottom:8px">📋</div>Nenhuma conferência ainda.<br>Inicie uma nova acima!</div>`;
+    return;
+  }
+  container.innerHTML=historyData.slice(0,3).map(h=>{
+    const barCls=h.status==='ok'?'green':h.status==='miss'?'red':'navy';
+    const pct=h.total>0?Math.round((h.ok/h.total)*100):100;
+    return `<div class="cconf-card">
+      <div class="cconf-bar ${barCls}"></div>
+      <div class="cconf-body">
+        <div class="cconf-meta"><span>${h.id}</span>${h.status!=='ok'?'<span style="color:var(--red)">⚠</span>':''}</div>
+        <div class="cconf-title">${h.status==='ok'?'✅ Conferência OK':'⚠️ Com Divergência'}</div>
+        ${h.status!=='ok'?`<div class="diverg-tag">⚠️ ${h.miss} faltando · ${h.extra} excedente</div>`:''}
+        <div class="progress-row">
+          <div class="progress-track"><div class="progress-fill ${barCls}" style="width:${pct}%"></div></div>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">${pct}%</span>
+        </div>
+        <div class="cconf-footer">
+          <span class="cconf-time">🕐 ${h.date}</span>
+          <button class="btn-sm outline" onclick="openModal('${h.id}')">Ver</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ ACTIONS ═══
+function aprovarPendencias(){if(confirm('Aprovar com pendências?')) concluir();}
+function concluir(){
+  state.nota=null;state.carrinho=null;
+  ['Nota','Carrinho'].forEach(n=>{
+    document.getElementById('preview'+n).classList.remove('show');
+    document.getElementById('card'+n).classList.remove('has-image');
+    document.getElementById('input'+n).value='';
+  });
+  document.getElementById('errorBox').classList.remove('show');
+  document.getElementById('loadingBox').classList.remove('show');
+  checkReady();
+  goTo('historico');
+}
+
+// ═══ INIT ═══
+renderHistory();
+updateDashboard();
+</script>
 </body>
-
 </html>
