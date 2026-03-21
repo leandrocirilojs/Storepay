@@ -111,6 +111,29 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .preview-img{width:100%;height:90px;object-fit:cover;border-radius:8px;margin-top:10px;display:none;}
 .preview-img.show{display:block;}
 
+/* Multi-fotos carrinho */
+.multi-section{background:var(--white);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid var(--border);}
+.multi-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.multi-title{font-size:13px;font-weight:700;color:var(--navy);}
+.multi-count{font-size:11px;font-weight:700;color:var(--muted);}
+.multi-count span{color:var(--navy);}
+.multi-hint{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.5;}
+.multi-hint strong{color:var(--orange);}
+.multi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}
+.multi-thumb{position:relative;width:100%;aspect-ratio:1;border-radius:10px;background:var(--bg);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:.2s;}
+.multi-thumb:hover{border-color:var(--navy);}
+.multi-thumb.filled{border-style:solid;border-color:var(--green);}
+.multi-thumb img{width:100%;height:100%;object-fit:cover;display:none;}
+.multi-thumb.filled img{display:block;}
+.multi-thumb .plus{font-size:20px;color:var(--muted);}
+.multi-thumb.filled .plus{display:none;}
+.multi-thumb input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.multi-thumb .remove-btn{display:none;position:absolute;top:4px;right:4px;background:var(--red);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;align-items:center;justify-content:center;font-weight:700;z-index:10;}
+.multi-thumb.filled .remove-btn{display:flex;}
+.btn-add-foto{width:100%;padding:10px;background:var(--bg);border:1.5px dashed var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s;display:none;}
+.btn-add-foto:hover{border-color:var(--navy);color:var(--navy);}
+.btn-add-foto.show{display:block;}
+
 .tip-text{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;font-weight:500;}
 .tip-text.ready{color:var(--green);font-weight:700;}
 
@@ -319,22 +342,56 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="apikey-hint">Grátis em <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a></div>
     </div>
 
-    <div class="upload-grid">
+    <!-- Nota fiscal -->
+    <div class="upload-grid" style="grid-template-columns:1fr;">
       <div class="upload-card" id="cardNota">
         <span class="check-badge">✓ OK</span>
         <input type="file" accept="image/*" capture="environment" id="inputNota" onchange="handleUpload('nota',this)">
-        <div class="upload-icon-wrap">🧾</div>
-        <div class="upload-card-title">Nota / Pedido</div>
-        <div class="upload-card-sub">Foto da nota fiscal ou lista do pedido</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="upload-icon-wrap" style="margin-bottom:0;flex-shrink:0;">🧾</div>
+          <div>
+            <div class="upload-card-title">Nota / Pedido</div>
+            <div class="upload-card-sub">Toque para fotografar ou escolher da galeria</div>
+          </div>
+        </div>
         <img class="preview-img" id="previewNota" alt="">
       </div>
-      <div class="upload-card" id="cardCarrinho">
-        <span class="check-badge">✓ OK</span>
-        <input type="file" accept="image/*" capture="environment" id="inputCarrinho" onchange="handleUpload('carrinho',this)">
-        <div class="upload-icon-wrap">📦</div>
-        <div class="upload-card-title">Carrinho / Sacola</div>
-        <div class="upload-card-sub">Foto dos produtos separados</div>
-        <img class="preview-img" id="previewCarrinho" alt="">
+    </div>
+
+    <!-- Múltiplas fotos do carrinho -->
+    <div class="multi-section">
+      <div class="multi-header">
+        <div class="multi-title">📦 Carrinho / Sacola</div>
+        <div class="multi-count"><span id="multiCountNum">0</span>/4 fotos</div>
+      </div>
+      <div class="multi-hint">
+        Carrinho cheio? <strong>Tire até 4 fotos</strong> de ângulos diferentes para a IA identificar todos os produtos.
+      </div>
+      <div class="multi-grid" id="multiGrid">
+        <div class="multi-thumb" id="thumb0">
+          <input type="file" accept="image/*" capture="environment" onchange="addCarrinhoFoto(this,0)">
+          <span class="plus">＋</span>
+          <img id="thumbImg0" alt="">
+          <button class="remove-btn" onclick="removeCarrinhoFoto(event,0)">✕</button>
+        </div>
+        <div class="multi-thumb" id="thumb1" style="display:none">
+          <input type="file" accept="image/*" capture="environment" onchange="addCarrinhoFoto(this,1)">
+          <span class="plus">＋</span>
+          <img id="thumbImg1" alt="">
+          <button class="remove-btn" onclick="removeCarrinhoFoto(event,1)">✕</button>
+        </div>
+        <div class="multi-thumb" id="thumb2" style="display:none">
+          <input type="file" accept="image/*" capture="environment" onchange="addCarrinhoFoto(this,2)">
+          <span class="plus">＋</span>
+          <img id="thumbImg2" alt="">
+          <button class="remove-btn" onclick="removeCarrinhoFoto(event,2)">✕</button>
+        </div>
+        <div class="multi-thumb" id="thumb3" style="display:none">
+          <input type="file" accept="image/*" capture="environment" onchange="addCarrinhoFoto(this,3)">
+          <span class="plus">＋</span>
+          <img id="thumbImg3" alt="">
+          <button class="remove-btn" onclick="removeCarrinhoFoto(event,3)">✕</button>
+        </div>
       </div>
     </div>
 
@@ -487,36 +544,87 @@ function goTo(name){
 }
 
 // ═══ STATE ═══
-const state = {nota:null,carrinho:null};
+const state = {nota:null, carrinho:[]};  // carrinho agora é array de até 4 fotos
 let historyData = [];
 try{ historyData = JSON.parse(localStorage.getItem('conf_history')||'[]'); }catch(e){}
 let currentFilter = 'all';
 
-// ═══ UPLOAD ═══
+// ═══ UPLOAD NOTA ═══
 function handleUpload(tipo,input){
   const file=input.files[0]; if(!file) return;
   const reader=new FileReader();
   reader.onload=e=>{
     state[tipo]=e.target.result;
-    const key=tipo==='nota'?'Nota':'Carrinho';
-    const prev=document.getElementById('preview'+key);
+    const prev=document.getElementById('previewNota');
     prev.src=e.target.result; prev.classList.add('show');
-    document.getElementById('card'+key).classList.add('has-image');
+    document.getElementById('cardNota').classList.add('has-image');
     checkReady();
   };
   reader.readAsDataURL(file);
 }
+
+// ═══ UPLOAD CARRINHO (múltiplas fotos) ═══
+function addCarrinhoFoto(input, idx){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    state.carrinho[idx]=e.target.result;
+    const img=document.getElementById('thumbImg'+idx);
+    img.src=e.target.result;
+    document.getElementById('thumb'+idx).classList.add('filled');
+    // mostrar próximo slot se existir e não estiver cheio
+    if(idx < 3 && state.carrinho.filter(Boolean).length < 4){
+      document.getElementById('thumb'+(idx+1)).style.display='flex';
+    }
+    updateMultiCount();
+    checkReady();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeCarrinhoFoto(e, idx){
+  e.preventDefault(); e.stopPropagation();
+  state.carrinho[idx]=null;
+  const thumb=document.getElementById('thumb'+idx);
+  thumb.classList.remove('filled');
+  document.getElementById('thumbImg'+idx).src='';
+  // esconder slots vazios após o removido
+  for(let i=3;i>0;i--){
+    const hasPhoto = state.carrinho[i];
+    const prevHas = state.carrinho[i-1];
+    if(!hasPhoto && !prevHas) document.getElementById('thumb'+i).style.display='none';
+  }
+  updateMultiCount();
+  checkReady();
+}
+
+function updateMultiCount(){
+  const count=state.carrinho.filter(Boolean).length;
+  document.getElementById('multiCountNum').textContent=count;
+}
+
 function toggleKey(){
   const inp=document.getElementById('inputApiKey');
   inp.type=inp.type==='password'?'text':'password';
 }
+
 function checkReady(){
   const btn=document.getElementById('btnAnalyze');
   const tip=document.getElementById('tipText');
   const key=document.getElementById('inputApiKey').value.trim();
+  const temCarrinho=state.carrinho.filter(Boolean).length>0;
   if(!key){btn.disabled=true;tip.textContent='Insira sua chave da API Groq para continuar';tip.className='tip-text';return;}
-  if(state.nota&&state.carrinho){btn.disabled=false;tip.textContent='✅ Tudo pronto! Clique em Analisar com IA';tip.className='tip-text ready';}
-  else{const m=!state.nota?'foto da nota fiscal':'foto do carrinho';tip.textContent=`Ainda falta a ${m}`;tip.className='tip-text';btn.disabled=true;}
+  if(state.nota && temCarrinho){
+    const nFotos=state.carrinho.filter(Boolean).length;
+    btn.disabled=false;
+    tip.textContent=`✅ Pronto! ${nFotos} foto${nFotos>1?'s':''} do carrinho. Clique em Analisar`;
+    tip.className='tip-text ready';
+  } else {
+    const m=!state.nota?'foto da nota fiscal':'foto do carrinho';
+    tip.textContent=`Ainda falta a ${m}`;
+    tip.className='tip-text';
+    btn.disabled=true;
+  }
 }
 
 // ═══ ANALYZE ═══
@@ -532,11 +640,12 @@ async function analisar(){
   document.getElementById('btnAnalyze').disabled=true;
   animateSteps();
 
+  const nFotos = state.carrinho.filter(Boolean).length;
   const prompt=`Você é um sistema rigoroso de conferência de pedidos de supermercado/mercado.
 
-Você recebeu DUAS imagens:
+Você recebeu ${1 + nFotos} imagens:
 - IMAGEM 1: Nota fiscal ou lista de pedido (o que foi PEDIDO)
-- IMAGEM 2: Foto do carrinho ou sacola com os produtos separados (o que está FÍSICAMENTE presente)
+- IMAGENS 2 a ${1+nFotos}: ${nFotos} foto${nFotos>1?'s':''} do carrinho ou sacola de ângulos diferentes (o que está FISICAMENTE presente — considere TODAS as fotos do carrinho juntas como uma visão completa)
 
 INSTRUÇÕES OBRIGATÓRIAS — siga todas sem exceção:
 
@@ -565,17 +674,21 @@ Responda SOMENTE com JSON válido, sem markdown, sem texto antes ou depois:
 }`;
 
   try{
+    // Montar content com nota + todas as fotos do carrinho
+    const carrinhoFotos = state.carrinho.filter(Boolean);
+    const msgContent = [
+      {type:'image_url', image_url:{url:state.nota}},
+      ...carrinhoFotos.map(f=>({type:'image_url', image_url:{url:f}})),
+      {type:'text', text:prompt}
+    ];
+
     const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
       body:JSON.stringify({
         model:'meta-llama/llama-4-scout-17b-16e-instruct',
         max_tokens:1500,temperature:0.1,
-        messages:[{role:'user',content:[
-          {type:'image_url',image_url:{url:state.nota}},
-          {type:'image_url',image_url:{url:state.carrinho}},
-          {type:'text',text:prompt}
-        ]}]
+        messages:[{role:'user',content:msgContent}]
       })
     });
     if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`Erro ${res.status}`);}
@@ -594,17 +707,14 @@ Responda SOMENTE com JSON válido, sem markdown, sem texto antes ou depois:
 }
 
 // ═══ SONS ═══
-let audioCtx = null;
-function getAudioCtx(){
-  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-  return audioCtx;
+function createCtx(){
+  try{ return new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
 }
 
 function playSuccess(){
+  const ctx = createCtx(); if(!ctx) return;
   try{
-    const ctx = getAudioCtx();
-    // Três notas ascendentes: acorde de vitória
-    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+    const notes = [523.25, 659.25, 783.99];
     notes.forEach((freq, i) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -621,12 +731,11 @@ function playSuccess(){
 }
 
 function playAlert(){
+  const ctx = createCtx(); if(!ctx) return;
   try{
-    const ctx = getAudioCtx();
-    // Duas notas descendentes + buzz: sinal de atenção
     const sequence = [
-      {freq:880, t:0,    dur:0.15, type:'square', vol:0.15},
-      {freq:880, t:0.18, dur:0.15, type:'square', vol:0.15},
+      {freq:880, t:0,    dur:0.15, type:'square',   vol:0.15},
+      {freq:880, t:0.18, dur:0.15, type:'square',   vol:0.15},
       {freq:440, t:0.38, dur:0.35, type:'sawtooth', vol:0.1},
     ];
     sequence.forEach(({freq,t,dur,type,vol})=>{
@@ -645,9 +754,8 @@ function playAlert(){
 }
 
 function playError(){
+  const ctx = createCtx(); if(!ctx) return;
   try{
-    const ctx = getAudioCtx();
-    // Tom grave e curto: erro
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
@@ -862,12 +970,20 @@ function updateDashboard(){
 // ═══ ACTIONS ═══
 function aprovarPendencias(){if(confirm('Aprovar com pendências?')) concluir();}
 function concluir(){
-  state.nota=null;state.carrinho=null;
-  ['Nota','Carrinho'].forEach(n=>{
-    document.getElementById('preview'+n).classList.remove('show');
-    document.getElementById('card'+n).classList.remove('has-image');
-    document.getElementById('input'+n).value='';
-  });
+  state.nota=null;
+  state.carrinho=[];
+  // reset nota
+  document.getElementById('previewNota').classList.remove('show');
+  document.getElementById('cardNota').classList.remove('has-image');
+  document.getElementById('inputNota').value='';
+  // reset carrinho thumbs
+  for(let i=0;i<4;i++){
+    const thumb=document.getElementById('thumb'+i);
+    thumb.classList.remove('filled');
+    document.getElementById('thumbImg'+i).src='';
+    if(i>0) thumb.style.display='none';
+  }
+  document.getElementById('multiCountNum').textContent='0';
   document.getElementById('errorBox').classList.remove('show');
   document.getElementById('loadingBox').classList.remove('show');
   checkReady();
