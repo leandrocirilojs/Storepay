@@ -549,37 +549,51 @@ let historyData = [];
 try{ historyData = JSON.parse(localStorage.getItem('conf_history')||'[]'); }catch(e){}
 let currentFilter = 'all';
 
+// ═══ COMPRESSÃO DE IMAGEM ═══
+function compressImage(file, maxWidth, quality){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        let w=img.width, h=img.height;
+        if(w>maxWidth){ h=Math.round(h*maxWidth/w); w=maxWidth; }
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 // ═══ UPLOAD NOTA ═══
-function handleUpload(tipo,input){
+async function handleUpload(tipo,input){
   const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    state[tipo]=e.target.result;
-    const prev=document.getElementById('previewNota');
-    prev.src=e.target.result; prev.classList.add('show');
-    document.getElementById('cardNota').classList.add('has-image');
-    checkReady();
-  };
-  reader.readAsDataURL(file);
+  const compressed = await compressImage(file, 1280, 0.82);
+  state[tipo]=compressed;
+  const prev=document.getElementById('previewNota');
+  prev.src=compressed; prev.classList.add('show');
+  document.getElementById('cardNota').classList.add('has-image');
+  checkReady();
 }
 
 // ═══ UPLOAD CARRINHO (múltiplas fotos) ═══
-function addCarrinhoFoto(input, idx){
+async function addCarrinhoFoto(input, idx){
   const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    state.carrinho[idx]=e.target.result;
-    const img=document.getElementById('thumbImg'+idx);
-    img.src=e.target.result;
-    document.getElementById('thumb'+idx).classList.add('filled');
-    // mostrar próximo slot se existir e não estiver cheio
-    if(idx < 3 && state.carrinho.filter(Boolean).length < 4){
-      document.getElementById('thumb'+(idx+1)).style.display='flex';
-    }
-    updateMultiCount();
-    checkReady();
-  };
-  reader.readAsDataURL(file);
+  const compressed = await compressImage(file, 1280, 0.82);
+  state.carrinho[idx]=compressed;
+  const img=document.getElementById('thumbImg'+idx);
+  img.src=compressed;
+  document.getElementById('thumb'+idx).classList.add('filled');
+  if(idx < 3 && state.carrinho.filter(Boolean).length < 4){
+    document.getElementById('thumb'+(idx+1)).style.display='flex';
+  }
+  updateMultiCount();
+  checkReady();
 }
 
 function removeCarrinhoFoto(e, idx){
@@ -617,7 +631,11 @@ function checkReady(){
   if(state.nota && temCarrinho){
     const nFotos=state.carrinho.filter(Boolean).length;
     btn.disabled=false;
-    tip.textContent=`✅ Pronto! ${nFotos} foto${nFotos>1?'s':''} do carrinho. Clique em Analisar`;
+    // calcular tamanho total aproximado
+    const totalKB = Math.round(
+      ([state.nota,...state.carrinho.filter(Boolean)].reduce((s,d)=>s+(d?d.length:0),0)*0.75)/1024
+    );
+    tip.textContent=`✅ Pronto! ${nFotos} foto${nFotos>1?'s':''} · ~${totalKB<1024?totalKB+'KB':(totalKB/1024).toFixed(1)+'MB'}. Clique em Analisar`;
     tip.className='tip-text ready';
   } else {
     const m=!state.nota?'foto da nota fiscal':'foto do carrinho';
