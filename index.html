@@ -628,9 +628,22 @@ function checkReady(){
 }
 
 // ═══ ANALYZE ═══
-async function animateSteps(){
+let stepTimers=[];
+function animateSteps(){
+  stepTimers.forEach(t=>clearTimeout(t));
+  stepTimers=[];
   const ids=['step1','step2','step3','step4'];
-  ids.forEach((id,i)=>setTimeout(()=>{ids.forEach(s=>document.getElementById(s).classList.remove('active'));document.getElementById(id).classList.add('active');},i*1400));
+  ids.forEach((id,i)=>{
+    const t=setTimeout(()=>{
+      ids.forEach(s=>document.getElementById(s).classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    },i*1400);
+    stepTimers.push(t);
+  });
+}
+function stopSteps(){
+  stepTimers.forEach(t=>clearTimeout(t));
+  stepTimers=[];
 }
 async function analisar(){
   const apiKey=document.getElementById('inputApiKey').value.trim();
@@ -694,9 +707,24 @@ Responda SOMENTE com JSON válido, sem markdown, sem texto antes ou depois:
     if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`Erro ${res.status}`);}
     const data=await res.json();
     const raw=data.choices?.[0]?.message?.content||'';
-    const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    // Extrai JSON mesmo que a IA coloque texto em volta
+    let jsonStr = raw.replace(/```json|```/g,'').trim();
+    const jsonStart = jsonStr.indexOf('{');
+    const jsonEnd = jsonStr.lastIndexOf('}');
+    if(jsonStart === -1 || jsonEnd === -1) throw new Error('A IA não retornou JSON válido. Tente novamente.');
+    jsonStr = jsonStr.slice(jsonStart, jsonEnd+1);
+
+    let result;
+    try{ result = JSON.parse(jsonStr); }
+    catch(e){ throw new Error('Erro ao interpretar resposta da IA. Tente novamente.'); }
+
+    if(!result.itens || !Array.isArray(result.itens)) throw new Error('Resposta incompleta da IA. Tente novamente.');
+    stopSteps();
     renderResults(result);
+
   }catch(err){
+    stopSteps();
     document.getElementById('loadingBox').classList.remove('show');
     document.getElementById('btnAnalyze').disabled=false;
     const box=document.getElementById('errorBox');
@@ -770,6 +798,7 @@ function playError(){
 
 // ═══ RENDER ═══
 function renderResults(result){
+  stopSteps();
   document.getElementById('loadingBox').classList.remove('show');
   const itens=result.itens||[];
   const obs=result.observacoes||'';
